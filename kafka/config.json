@@ -1,11 +1,12 @@
 {
     "topic": "qualidadeAr",
+    "console_format": "QUALIDADE DO AR AGORA: {nivel} de {tipoPoluente}, em {timestamp}, no sensor {idSensor}",
     "fields": {
         "idSensor": {
             "type": "string",
             "random": {
                 "type": "array",
-                "values": ["sensor_001", "sensor_002", "sensor_003"]
+                "values": ["001", "002", "003"]
             }
         },
         "nivel": {

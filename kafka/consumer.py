@@ -13,22 +13,39 @@ producer_config = {
     'client.id': 'python-producer'
 }
 
-# Configurações do consumidor
 consumer_config = {
     'bootstrap.servers': 'localhost:29092,localhost:39092',
     'group.id': 'python-consumer-group',
     'auto.offset.reset': 'earliest'
 }
 
-topic = 'qualidadeAr'
+def create_consumer(topic):
+    consumer = Consumer(**consumer_config)
+    consumer.subscribe([topic])
+    return consumer
 
-# Criar consumidor
-consumer = Consumer(**consumer_config)
+def read_config(filename):
+    with open(filename, 'r') as f:
+        config = json.load(f)
+        return config 
+    
+def save_to_mongo(decoded):
+    colecao.insert_one(json.loads(decoded))
 
-# Assinar tópico
-consumer.subscribe([topic])
+config = read_config('config.json')
 
-# Consumir mensagens
+consumer = create_consumer(config['topic'])
+
+def handle_message(decoded):
+    save_to_mongo(decoded)
+    display_formatted_message(decoded)
+
+def display_formatted_message(decoded):
+    dictionary = json.loads(decoded)
+
+    console_format = config['console_format']
+    msg = console_format.format(**dictionary)
+    print(msg)
 try:
     while True:
         msg = consumer.poll(timeout=1.0)
@@ -40,12 +57,10 @@ try:
             else:
                 print(msg.error())
                 break
-        print(f'Received message: {msg.value().decode("utf-8")}')
-        s = msg.value().decode('utf-8')
-        s = s.replace("\'", "\"")
-        colecao.insert_one(json.loads(s))
+        decoded = msg.value().decode('utf-8')
+        decoded = decoded.replace("'", "\"")
+        handle_message(decoded)
 except KeyboardInterrupt:
     pass
 finally:
-    # Fechar consumidor
     consumer.close()
