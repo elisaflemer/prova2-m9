@@ -62,3 +62,6 @@ python kafka/consumer.py
 Para testar, basta rodar `pytest` no console, após garantir que o pacote está instalado.
 
 ## Demo
+
+https://github.com/elisaflemer/prova2-m9/assets/99259251/8c21e1ab-eb5d-4198-b2c9-26f550eda46d
+
