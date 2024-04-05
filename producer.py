@@ -1,6 +1,8 @@
 from confluent_kafka import Producer, Consumer, KafkaError
-import time
+import datetime
 import random
+import json
+import time
 
 # Configurações do produtor
 producer_config = {
@@ -18,20 +20,29 @@ def delivery_callback(err, msg):
     else:
         print(f'Message delivered to {msg.topic()} [{msg.partition()}]')
 
-# Enviar mensagem
-topic = 'qualidadeAr'
+topic = ''
+
+def read_config(filename):
+    with open(filename, 'r') as f:
+        config = json.load(f)
+        return config 
+
+config = read_config('config.json')
 
 def generate_message():
-    return str({
-    "idSensor": random.choice(["sensor_001", "sensor_002", "sensor_003"]),
-    "timestamp": int(time.time()),
-    "tipoPoluente": random.choice(["PM2.5", "PM10", "CO", "NO2", "O3", "SO2"]),
-    "nivel": random.randint(0, 100)
-})
+    message = {}
+    for item in config['fields']:
+        if config['fields'][item]['random']['type'] == 'integer':
+            print('here')
+            message[item] = random.randint(config['fields'][item]['random']['min'], config['fields'][item]['random']['max'])
+        elif config['fields'][item]['random']['type'] == 'array':
+            message[item] = random.choice(config['fields'][item]['random']['values'])
+        elif config['fields'][item]['random']['type'] == 'timestamp':
+            message[item] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return json.dumps(message)
 while True:
     message = generate_message()
-    producer.produce(topic, message.encode('utf-8'), callback=delivery_callback)
+    producer.produce(config['topic'], message.encode('utf-8'), callback=delivery_callback)
 
-    # Aguardar a entrega de todas as mensagens
     producer.flush()
     time.sleep(1)
