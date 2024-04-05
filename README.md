@@ -47,3 +47,18 @@ Esse sistema é iniciado por um docker compose, que sobe os containers de kafka,
 É essencial que o nome de cada campo seja escrito da mesma forma na string de console_format, para que a string de template funcione corretamente no consumer.
 
 Ademais, foram feitos testes para validar a persistência de dados e a integridade deles no ecossistema Kafka. Eles estão disponíveis na pasta tests e, em resumo, utilizam as funções de criação de producers e consumers, assim como uma conexão com o banco Mongo, para publicar uma mensagem de teste e averiguar sua chegada correta tanto no tópico do Kafka quanto no banco de dados.
+
+## Como rodar
+
+Para executar esse sistema, basta clonar este repositório e, garantindo que o Docker daemon está rodando na sua máquina, executar:
+
+```
+docker-compose up
+python kafka/producer.py
+python kafka/consumer.py
+
+```
+
+Para testar, basta rodar `pytest` no console, após garantir que o pacote está instalado.
+
+## Demo
