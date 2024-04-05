@@ -1,0 +1,28 @@
+{
+    "fields": {
+        "idSensor": {
+            "type": "string",
+            "random": {
+                "type": "array",
+                "values": ["sensor_001", "sensor_002", "sensor_003"]
+            }
+        },
+        "nivel": {
+            "type": "integer",
+            "random": {
+                "type": "number",
+                "min": 0,
+                "max": 100
+            }
+        },
+        "timestamp": {
+            "type": "date",
+            "random": {
+                "type": "timestamp"
+            }
+        },
+        
+
+        
+    }
+}
